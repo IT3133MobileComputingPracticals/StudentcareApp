@@ -1,171 +1,160 @@
-import * as React from 'react'
-import { PaperProvider, Appbar, Text, BottomNavigation } from 'react-native-paper'
-import { StyleSheet, View, ScrollView, Image } from 'react-native';
+import * as React from 'react';
+import { PaperProvider, Appbar, Text } from 'react-native-paper';
+import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native';
-
-import { CommonActions } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { NavigationContainer } from '@react-navigation/native';
-
-
-const Tab = createBottomTabNavigator();
 
 export default function Home() {
     const uovLogoImage = require('../assets/uovLogo.jpeg');
-    const goBack = () => console.log("Went back")
+    const goBack = () => console.log("Went back");
+
+    // State to manage the active screen
+    const [activeScreen, setActiveScreen] = React.useState('Profile');
+
+    const renderScreen = () => {
+        switch (activeScreen) {
+            case 'Profile':
+                return <ProfileScreen />;
+            case 'Course':
+                return <CourseScreen />;
+            case 'Subjects':
+                return <SubjectsScreen />;
+            default:
+                return <ProfileScreen />;
+        }
+    };
 
     return (
-        <>
-            <PaperProvider>
+        <PaperProvider>
+            <SafeAreaView style={styles.safeArea}>
+                
+                <View style={styles.container}>
+                <ScrollView>
+                    {/* Header */}
+                    <Appbar.Header style={styles.header}>
+                        <Appbar.BackAction color="white" onPress={goBack} />
+                        <Appbar.Content color="white" title="UOV Student Care" />
+                    </Appbar.Header>
 
-                <SafeAreaView>
-                    <ScrollView>
-                        <View style={styles.container}>
+                    {/* Image */}
+                    <View style={styles.imageContainer}>
+                        <Image source={uovLogoImage} style={styles.image} />
+                    </View>
 
-                            <View style={styles.headerContainer}>
-                                <Appbar.Header style={styles.header}>
-                                    <Appbar.BackAction color="white" onPress={goBack} />
-                                    <Appbar.Content color="white" title="UOV Student Care" />
-                                </Appbar.Header>
-                                <View style={styles.imageContainer}>
-                                    <Image source={uovLogoImage} style={styles.image} />
-                                </View>
-                            </View>
+                    {/* Dynamic Screen Content */}
+                    <View style={styles.screenContainer}>
+                        {renderScreen()}
+                    </View>
+                
+                    
+                </ScrollView>
+                </View>
 
+                {/* Footer with Bottom Navigation */}
+                <View style={styles.footer}>
+                        <TouchableOpacity onPress={() => setActiveScreen('Profile')} style={styles.tabButton}>
+                            <Icon name="account" size={24} color={activeScreen === 'Profile' ? 'white' : 'gray'} />
+                            <Text style={[styles.tabLabel, activeScreen === 'Profile' && styles.activeTabLabel]}>
+                                Profile
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setActiveScreen('Course')} style={styles.tabButton}>
+                            <Icon name="book-open" size={24} color={activeScreen === 'Course' ? 'white' : 'gray'} />
+                            <Text style={[styles.tabLabel, activeScreen === 'Course' && styles.activeTabLabel]}>
+                                Course
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setActiveScreen('Subjects')} style={styles.tabButton}>
+                            <Icon name="file-document" size={24} color={activeScreen === 'Subjects' ? 'white' : 'gray'} />
+                            <Text style={[styles.tabLabel, activeScreen === 'Subjects' && styles.activeTabLabel]}>
+                                Subjects
+                            </Text>
+                        </TouchableOpacity>
+                </View>
 
-                            <View style={styles.footer}>
-                                <Text style={styles.footerText}>Uov@2024</Text>
-                            </View>
-
-
-
-                            <NavigationContainer>
-                                <View>
-                                    <Tab.Navigator
-                                        screenOptions={{
-                                            headerShown: false,
-                                        }}
-                                        tabBar={({ navigation, state, descriptors, insets }) => (
-                                            <BottomNavigation.Bar
-                                                navigationState={state}
-                                                safeAreaInsets={insets}
-                                                onTabPress={({ route, preventDefault }) => {
-                                                    const event = navigation.emit({
-                                                        type: 'tabPress',
-                                                        target: route.key,
-                                                        canPreventDefault: true,
-                                                    });
-
-                                                    if (event.defaultPrevented) {
-                                                        preventDefault();
-                                                    } else {
-                                                        navigation.dispatch({
-                                                            ...CommonActions.navigate(route.name, route.params),
-                                                            target: state.key,
-                                                        });
-                                                    }
-                                                }}
-                                                renderIcon={({ route, focused, color }) => {
-                                                    const { options } = descriptors[route.key];
-                                                    if (options.tabBarIcon) {
-                                                        return options.tabBarIcon({ focused, color, size: 24 });
-                                                    }
-
-                                                    return null;
-                                                }}
-                                                getLabelText={({ route }) => {
-                                                    const { options } = descriptors[route.key];
-                                                    const label =
-                                                        options.tabBarLabel !== undefined
-                                                            ? options.tabBarLabel
-                                                            : options.title !== undefined
-                                                                ? options.title
-                                                                : route.title;
-
-                                                    return label;
-                                                }}
-                                            />
-                                        )}
-                                    >
-                                        <Tab.Screen
-                                            name="Home"
-                                            component={HomeScreen}
-                                            options={{
-                                                tabBarLabel: 'Home',
-                                                tabBarIcon: ({ color, size }) => {
-                                                    return <Icon name="home" size={size} color={color} />;
-                                                },
-                                            }}
-                                        />
-                                        <Tab.Screen
-                                            name="Settings"
-                                            component={SettingsScreen}
-                                            options={{
-                                                tabBarLabel: 'Settings',
-                                                tabBarIcon: ({ color, size }) => {
-                                                    return <Icon name="cog" size={size} color={color} />;
-                                                },
-                                            }}
-                                        />
-                                    </Tab.Navigator>
-                                </View>
-                            </NavigationContainer>
-
-                        </View>
-                    </ScrollView>
-                </SafeAreaView>
-
-
-            </PaperProvider>
-
-        </>
-    )
+                
+            </SafeAreaView>
+        </PaperProvider>
+    );
 }
 
-function HomeScreen() {
+function ProfileScreen() {
     return (
-        <View style={styles.container}>
-            <Text variant="headlineMedium">Home!</Text>
+        <View style={styles.screen}>
+            <Text variant="headlineLarge">Profile Screen</Text>
         </View>
     );
 }
 
-function SettingsScreen() {
+function CourseScreen() {
     return (
-        <View style={styles.container}>
-            <Text variant="headlineMedium">Settings!</Text>
+        <View style={styles.screen}>
+            <Text variant="headlineLarge">Course Screen</Text>
+        </View>
+    );
+}
+
+function SubjectsScreen() {
+    return (
+        <View style={styles.screen}>
+            <Text variant="headlineLarge">Subjects Screen</Text>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
     container: {
         flex: 1,
         flexDirection: 'column',
         backgroundColor: '#fff',
-        justifyContent: 'center',
     },
     header: {
-        backgroundColor: 'purple'
+        backgroundColor: 'purple',
     },
     imageContainer: {
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
+        marginVertical: 20,
     },
     image: {
-        width: "80%",
+        width: '80%',
         height: 80,
-        margin: '20'
+        resizeMode: 'contain',
+    },
+    screenContainer: {
+        flex: 1,
+        backgroundColor: 'green',
+        padding: 20,
+        marginHorizontal: 10,
+        borderRadius: 10,
     },
     footer: {
+        flexDirection: 'row',
         backgroundColor: 'purple',
-        padding: 20,
+        padding: 10,
+        justifyContent: 'space-around',
+        alignItems: 'center',
+    },
+    tabButton: {
         justifyContent: 'center',
         alignItems: 'center',
     },
-    footerText: {
-        color: 'white'
-    }
-})
+    tabLabel: {
+        color: 'gray',
+        fontSize: 12,
+        marginTop: 5,
+    },
+    activeTabLabel: {
+        color: 'white',
+    },
+    screen: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+});
