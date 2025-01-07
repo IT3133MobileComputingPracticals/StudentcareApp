@@ -1,12 +1,15 @@
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
 import { Avatar, Card } from "react-native-paper";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const Profile = ({ student }) => {
   return (
+    <SafeAreaProvider style={styles.view}>
+    
     <View style={styles.view}>
       <Image source={require("../assets/logo.jpeg")} style={styles.image} />
-
+      <ScrollView>
       <Card style={{ margin: 20 }}>
         <Card.Content style={styles.cardContent}>
           <Image source={student.profile_pic} style={styles.profile_pic} />
@@ -36,7 +39,10 @@ const Profile = ({ student }) => {
           <Text>Blood Group: {student.blood_group}</Text>
         </Card.Content>
       </Card>
+      </ScrollView>
+
     </View>
+    </SafeAreaProvider>
   );
 };
 

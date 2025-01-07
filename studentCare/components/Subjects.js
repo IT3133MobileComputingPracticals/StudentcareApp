@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View,ScrollView} from "react-native";
 import { Card, DataTable } from "react-native-paper";
 import {
   courses,
@@ -22,7 +22,7 @@ const Subjects = ({ student }) => {
   return (
     <View style={styles.view}>
       <Image source={require("../assets/logo.jpeg")} style={styles.image} />
-
+      <ScrollView>
       <Card style={{ margin: 20 }}>
         <Card.Content style={styles.cardContent}>
           <Text style={styles.h1}>{course.name}</Text>
@@ -61,6 +61,7 @@ const Subjects = ({ student }) => {
           </DataTable>
         </Card.Content>
       </Card>
+      </ScrollView>
     </View>
   );
 };
